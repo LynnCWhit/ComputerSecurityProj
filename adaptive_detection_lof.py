@@ -8,6 +8,12 @@ num_points = 100
 num_fake_points = 20
 trusted_memory = []
 
+#10 iterations (simulating time or streaming behavior).
+#Each iteration includes:
+#100 new normal points (Gaussian).
+#20 anomalous/fake points (Uniform).
+#A list called trusted_memory stores confirmed normal samples over time.
+
 # For tracking accuracy over time
 detection_rates = []
 false_positive_rates = []
@@ -30,10 +36,17 @@ for run in range(num_runs):
         combined_data = np.vstack((new_normal, fake_data))
         trusted_memory_len = 0
 
+#Each round uses newly generated data + trusted past normal data.
+#The memory is capped at 200 samples to avoid overfitting or memory bloat.
+#All data is stacked together before anomaly detection.
+
     # --- Step 3: Ground truth (1 = real, -1 = fake)
     ground_truth = np.array(
         [1] * num_points + [-1] * num_fake_points + [1] * trusted_memory_len
     )
+
+#1 for normal data, -1 for fake.
+#Trusted memory is always labeled as normal.
 
     # --- Step 4: LOF detection with higher neighbors
     lof = LocalOutlierFactor(
@@ -41,6 +54,10 @@ for run in range(num_runs):
         contamination=num_fake_points / (num_points + num_fake_points),
     )
     predictions = lof.fit_predict(combined_data)
+
+#Uses scikit-learn’s LocalOutlierFactor algorithm.
+#n_neighbors=40 means LOF compares each point to its 40 nearest neighbors.
+#contamination = % of anomalies expected in the current batch.
 
     # --- Step 5: Categorize predictions
     true_positives = combined_data[(ground_truth == -1) & (predictions == -1)]
@@ -57,9 +74,17 @@ for run in range(num_runs):
     false_positive_rates.append(false_pos_rate)
     false_negative_rates.append(false_neg_rate)
 
+#Tracks performance for each run:
+#Detection Rate: % of anomalies correctly identified.
+#False Positive Rate: % of normal points misclassified as fake.
+#False Negative Rate: % of anomalies missed.
+
     # --- Step 7: Update trusted memory with confident normals
     trusted_normals = combined_data[(ground_truth == 1) & (predictions == 1)]
     trusted_memory.append(trusted_normals)
+
+#Only true negatives (high-confidence normals) are stored.
+#This simulates a semi-supervised or evolving model behavior.
 
     # --- Step 8: Output summary
     print(f"\n--- Run {run + 1} ---")
@@ -88,3 +113,9 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+#At the end, it plots how the detection performance changes across runs:
+#Green: Detection rate.
+#Red: False positives.
+#Gray: False negatives.
+#Each point is labeled with its exact percentage.
