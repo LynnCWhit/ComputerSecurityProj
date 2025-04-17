@@ -26,6 +26,11 @@ class Autoencoder(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
 
+#A simple feedforward autoencoder is defined.
+#Encoder: Compresses 2D input → 4D → 2D.
+#Decoder: Reconstructs back to 2D with sigmoid output.
+#Goal: Learn to reproduce "normal" data well, while "anomalies" (i.e., unusual patterns) reconstruct poorly.
+
 # ----- Initial Training on Normal Data -----
 num_initial = 1000
 initial_data = np.random.normal(loc=5, scale=1.2, size=(num_initial, 2))
@@ -36,6 +41,10 @@ tensor_initial = torch.tensor(scaled_initial, dtype=torch.float32)
 model = Autoencoder()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
+
+#Generates 1000 samples of normal data from a 2D Gaussian distribution (mean=5, std=1.2).
+#Data is scaled to [0, 1] using MinMaxScaler.
+#Trains the autoencoder on this normal data for 50 epochs using MSE loss and the Adam optimizer
 
 # Train once on the initial normal data
 epochs = 50
@@ -60,6 +69,9 @@ for run in range(num_runs):
     scaled_test = scaler.transform(combined_test)
     test_tensor = torch.tensor(scaled_test, dtype=torch.float32)
 
+    #100 new "normal" samples (from Gaussian) + 20 "fake" anomaly samples (from uniform distribution).
+    #Combines both → scales → converts to tensor.
+
     # --- Run inference ---
     model.eval()
     with torch.no_grad():
@@ -69,6 +81,11 @@ for run in range(num_runs):
     threshold = np.percentile(reconstruction_error, 80)
     predicted_anomalies = reconstruction_error > threshold
     predicted_labels = predicted_anomalies.astype(int)
+
+    #The autoencoder reconstructs all 120 test samples.
+    #Reconstruction error is computed per sample (MSE).
+    #Threshold is set at the 80th percentile of error distribution.
+    #Samples with error > threshold are flagged as anomalies.
 
     # Ground truth: 0 = normal, 1 = fake
     true_labels = np.array([0] * 100 + [1] * 20)
@@ -86,10 +103,22 @@ for run in range(num_runs):
     false_positive_rates.append(false_pos_rate)
     false_negative_rates.append(false_neg_rate)
 
+    #Compares predictions to actual labels.
+    #Calculates:
+    #Detection Rate (TPR): Correctly identified anomalies.
+    #False Positive Rate (FPR): Normal samples misclassified as anomalies.
+    #False Negative Rate (FNR): Anomalies missed.
+
     # --- Extract new trusted normal points (predicted normal & known normal) ---
     trusted_normals = scaled_test[(predicted_labels == 0) & (true_labels == 0)]
     if len(trusted_normals) > 0:
         trusted_tensor = torch.tensor(trusted_normals, dtype=torch.float32)
+
+        #Filters samples that:
+        #Were predicted as normal.
+        #Are actually normal (ground truth = 0).
+        #These are "trusted" samples used to incrementally retrain the autoencoder.
+        #Retraining is done for 10 mini-epochs to help the model adapt gradually.
 
         # --- Update model on trusted normals ---
         model.train()
@@ -125,3 +154,13 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+
+#At the end of the 10 runs, it plots:
+#Detection Rate, False Positive Rate, False Negative Rate
+#Each value is annotated per run to track how the model adapts over time.
+
+#This setup mimics an online anomaly detection system that's both unsupervised (no labels during training) and adaptive (learns incrementally).
+#It's a neat baseline for anomaly detection tasks in domains like cybersecurity, sensor monitoring, or autonomous systems.
+
+
