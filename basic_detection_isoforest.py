@@ -10,24 +10,42 @@ sensor_data = np.random.normal(loc=5, scale=1.2, size=(num_points, 2))
 num_fake_points = 20
 fake_data = np.random.uniform(low=0, high=10, size=(num_fake_points, 2))
 
+#Normal sensor data (100 points) is generated from a Gaussian distribution centered at 5.
+#Fake attack data (20 points) is from a uniform distribution across a wider range (0 to 10).
+#This simulates "injected" anomalies in a sensor stream.
+
 # Step 3: Combine the data
 combined_data = np.vstack((sensor_data, fake_data))
 
 # Step 4: Create ground truth labels (1 = real, -1 = fake)
 ground_truth = np.array([1] * num_points + [-1] * num_fake_points)
 
+#Merges real and fake data into one matrix.
+#Creates true labels:
+#1 = normal
+#-1 = fake/anomaly
+
 # Step 5: Train Isolation Forest
 model = IsolationForest(contamination=num_fake_points / (num_points + num_fake_points), random_state=42)
 model.fit(combined_data)
 
+#Trains a tree-based anomaly detector that works by isolating observations.
+#The contamination parameter is set based on the true proportion of fake points
+
 # Step 6: Predict anomalies (-1 = anomaly, 1 = normal)
 predictions = model.predict(combined_data)
+#Outputs 1 for normal, -1 for anomaly.
 
 # Step 7: Determine outcome categories for plotting
 true_positives = combined_data[(ground_truth == -1) & (predictions == -1)]  # correctly flagged fakes
 false_negatives = combined_data[(ground_truth == -1) & (predictions == 1)]  # missed fake points
 true_negatives = combined_data[(ground_truth == 1) & (predictions == 1)]   # correctly identified normal
 false_positives = combined_data[(ground_truth == 1) & (predictions == -1)]  # incorrectly flagged normal points
+#Sorts results into categories:
+#TP = correctly flagged fake
+#FN = missed fake
+#TN = correctly accepted normal
+#FP = wrongly flagged normal
 
 # Step 8: Plot all 3 stages side-by-side
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
@@ -84,3 +102,16 @@ axes[2].grid(True)
 
 plt.tight_layout()
 plt.show()
+
+#Plot 1: Normal Sensor Data Only
+#Shows only the Gaussian-distributed real data points.
+#Plot 2: Data After Attack
+#Overlay of:
+#Blue: Normal points
+#Red: Fake attack points
+#Plot 3: Detection Results
+#Color-coded output:
+#Green = True Normal
+#Red = True Attack
+#Yellow = False Alarm (normal misclassified)
+#Gray = Missed Attack
