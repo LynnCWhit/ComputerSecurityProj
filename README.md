@@ -23,6 +23,7 @@ Scatter plot generation based on different scenarios
 
     5. attack_resolution.py displays an example window that could be put into CAV vehicles to further improve the accuracy of attack detection rates but adding in human validation. Is not currently integrated into these simulations for prompting when an attack is assumed to be detected. 
 
+# Reference
     Contemporary Reference (Follow-up / Forward-Looking):
 Mammeri, A., Zrelli, M. H., & Zhou, J. (2023).
 "Collaborative perception-based anomaly detection for autonomous driving systems."
@@ -39,3 +40,14 @@ adaptive_detection_lof.py: An intermediate step. It has limited adaptation (reme
 adaptive_detection_autoencoder.py (non-adaptive): Trains once—akin to a student cramming before exams. Reflects many current machine learning deployments that struggle with generalization over time.
 
 adaptive_detection_autoencoder.py (adaptive): This version retrains after each run and best simulates the CAD system from your paper. It’s the most advanced and forward-looking, aligning with current trends in adversarial-aware and real-time anomaly detection in smart vehicles.
+
+# What we learned
+
+
+# How it Applies to what we have learned in class
+
+
+# Application Areas
+
+
+# Improvements
