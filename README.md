@@ -51,3 +51,5 @@ adaptive_detection_autoencoder.py (adaptive): This version retrains after each r
 
 
 # Improvements
+
+One of the biggest things we could improve on was communication and doing regular checkins to ensure we were staying on a good timeline when it came to development. 
