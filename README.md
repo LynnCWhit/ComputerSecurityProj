@@ -2,7 +2,7 @@
 Anomaly detection simulation using Isolation Forest, LOF, and adaptive autoencoders.
 
 # Clone Repository
-git clone https://github.com/Jalentravon/CS4371.git
+git clone https://github.com/LynnCWhit/ComputerSecurityProj.git
 
 # Build
 pip or pip3 install -r requirements.txt
