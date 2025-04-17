@@ -50,15 +50,27 @@ adaptive_detection_autoencoder.py (adaptive): This version retrains after each r
 
 # What we learned
 
-
-# How it Applies to what we have learned in class
-
+# Packet Filtering with IPTables 
+Why is This Important for Your Project?
+In the vehicular network from your paper, a compromised vehicle injects false perception data. If we treat this like a classic network intrusion, IPTables-like filtering logic could:
+Drop suspicious V2X messages based on unusual IPs, ports, or payloads.
+Prevent known malicious nodes from communicating.
+Rate-limit packets to avoid flooding or spoofing attacks.
+While CAD operates at the application layer analyzing data content, IPTables operates at the network layer filtering traffic structure. Together, they represent a multi-layered defense strategy, which is a best practice in cybersecurity: defense in depth.(AJ)
 
 # Application Areas
 
     1. CyberSecurity: Intrusion detection of unauthorised access or beahvior, malware, or fraud
     2. Finance or Banking: Credit Card Fraud, Insider Trading
     3. Healthcare: Unusual patterns in patient data, medical device faults
+
+# Packet Filtering with IPTables 
+Packet filtering is a network security mechanism that inspects incoming and outgoing packets and accepts or blocks them based on predefined rules. It forms the backbone of firewalls, helping protect systems from unauthorized access or malicious traffic.
+Tie-In with Your CAD System:
+Although the CAD system focuses on collaborative perception-level anomalies, adding packet-level filtering at the edge can complement your anomaly detection:
+Block fabricated messages before they reach the CAD module.
+Enforce rules like "only accept messages from known neighbors" (akin to a whitelist).
+Filter or log unusually frequent or malformed perception packets.(AJ)
 
 # Improvements
 
