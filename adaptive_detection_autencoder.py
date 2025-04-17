@@ -26,6 +26,12 @@ class Autoencoder(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
 
+#A basic fully-connected (dense) autoencoder is defined using PyTorch:
+#Input layer: 2 features.
+#Encoder: Compresses from 2 → 4 → 2 dimensions with ReLU.
+#Decoder: Expands from 2 → 4 → 2 dimensions, ending with a sigmoid activation.
+#The goal is to reconstruct input data as accurately as possible.
+
 # ----- Step 1: Train the Autoencoder -----
 num_train_points = 1000
 train_data = np.random.normal(loc=5, scale=1.2, size=(num_train_points, 2))
@@ -38,6 +44,13 @@ model = Autoencoder()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 epochs = 50
+
+#Simulates "normal" 2D data sampled from a Gaussian distribution.
+#Data is scaled to the [0, 1] range using MinMaxScaler.
+#The autoencoder is trained for 50 epochs using:
+#MSELoss (mean squared error).
+#Adam optimizer with a learning rate of 0.01.
+#Every 10 epochs, it prints the loss for monitoring.
 
 for epoch in range(epochs):
     output = model(train_tensor)
@@ -63,6 +76,11 @@ for run in range(num_runs):
     test_scaled = scaler.transform(test_combined)
     test_tensor = torch.tensor(test_scaled, dtype=torch.float32)
 
+#Each run includes:
+#100 normal samples (from same distribution as training).
+#20 fake/anomalous samples (from a uniform distribution).
+#These are scaled with the same MinMaxScaler.
+
     # Run through autoencoder
     model.eval()
     with torch.no_grad():
@@ -72,9 +90,21 @@ for run in range(num_runs):
     threshold = np.percentile(reconstruction_error, 80)
     predicted_anomalies = reconstruction_error > threshold
 
+#Each test sample is reconstructed by the autoencoder.
+#Reconstruction error (MSE per sample) is computed.
+#A threshold is set at the 80th percentile:
+#This means the top 20% of samples with highest error are flagged as anomalies.
+
     # Accuracy metrics
     true_labels = np.array([0] * 100 + [1] * 20)  # 0 = normal, 1 = fake
     predicted_labels = predicted_anomalies.astype(int)
+
+#Compares predicted anomalies to true labels.
+#Calculates:
+#Detection Rate (True Positive Rate): % of anomalies correctly detected.
+#False Positive Rate: % of normal points incorrectly marked as anomalies.
+#False Negative Rate: % of anomalies missed.
+#Results are printed after each run.
 
     tp = np.sum((true_labels == 1) & (predicted_labels == 1))
     fp = np.sum((true_labels == 0) & (predicted_labels == 1))
@@ -114,3 +144,8 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+#At the end of all runs:
+#Plots detection rate, false positive rate, and false negative rate across the 10 runs.
+#Each point is annotated with the corresponding percentage.
+#The graph shows how well the fixed model generalizes to multiple rounds of unseen data.
