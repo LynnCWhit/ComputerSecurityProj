@@ -1,6 +1,13 @@
 # CS4371
 Anomaly detection simulation using Isolation Forest, LOF, and adaptive autoencoders.
 
+# Paper
+On Data Fabrication in Collaborative Vehicular Perception: Attacks and Countermeasures
+https://paperswithcode.com/paper/on-data-fabrication-in-collaborative
+
+# Overview
+This paper addresses the security vulnerabilities in collaborative perception systems used by connected and autonomous vehicles (CAVs). These systems enhance a vehicle's sensing capabilities by incorporating data from external sources. However, they also introduce risks, as malicious participants can inject fabricated data, potentially leading to incorrect driving decisions.​
+
 # Clone Repository
 git clone https://github.com/LynnCWhit/ComputerSecurityProj.git
 
