@@ -49,9 +49,9 @@ adaptive_detection_autoencoder.py (adaptive): This version retrains after each r
 
 # Application Areas
 
-CyberSecurity: Intrusion detection of unauthorised access or beahvior, malware, or fraud\n
-Finance or Banking: Credit Card Fraud, Insider Trading\n
-Healthcare: Unusual patterns in patient data, medical device faults\n
+    1. CyberSecurity: Intrusion detection of unauthorised access or beahvior, malware, or fraud
+    2. Finance or Banking: Credit Card Fraud, Insider Trading
+    3. Healthcare: Unusual patterns in patient data, medical device faults
 
 # Improvements
 
